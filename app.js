@@ -3,7 +3,9 @@ var express = require('express'),
     bodyParser = require('body-parser');
 
 //SET UP OUR DATA URL AND CONNECT
-var db = mongoose.connect('mongodb://127.0.0.1:27017/userAPI');
+//var db = mongoose.connect('mongodb://127.0.0.1:27017/userAPI');
+var db = mongoose.connect('mongodb://admin:admin@ds157509.mlab.com:57509/blood-donation');
+
 var User = require('./models/userModel');
 var Event = require('./models/eventModel');
 
