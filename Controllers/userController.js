@@ -12,7 +12,18 @@ var userController = function (User) {
             if (err) {
                 res.status(500).send(err);
             } else {
-                res.json(users);
+                var returnUsers = [];
+                users.forEach(function (element) {
+                    var newUser = element.toJSON();
+                    newUser.links = {};
+                    if (req.headers.host === "localhost:8000") {
+                        newUser.links.self = "http://" + req.headers.host + '/api/users/' + newUser._id;
+                    } else {
+                        newUser.links.self = "https://" + req.headers.host + '/api/users/' + newUser._id;
+                    }
+                    returnUsers.push(newUser);
+                }, this);
+                res.json(returnUsers);
             }
         });
     }
