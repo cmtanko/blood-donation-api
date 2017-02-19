@@ -5,6 +5,8 @@ var express = require('express'),
 //SET UP OUR DATA URL AND CONNECT
 var db = mongoose.connect('mongodb://127.0.0.1:27017/userAPI');
 var User = require('./models/userModel');
+var Event = require('./models/eventModel');
+
 
 var app = express();
 var port = process.env.PORT || 3000;
@@ -16,6 +18,8 @@ app.use(bodyParser.json());
 var userRouter = require('./Routes/userRoutes')(User);
 app.use('/api/users', userRouter);
 
+var eventRouter = require('./Routes/eventRoutes')(Event);
+app.use('/api/events', eventRouter);
 
 //create default route
 app.get('/', function(req, res){
