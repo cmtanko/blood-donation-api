@@ -1,31 +1,50 @@
-var userController = function (User) {
+var screen = require('../screen');
+var db = require('../db');
+var userRepoService = require('../services/userRepoService')(db);
+var Treeize = require('treeize');
+
+var userController = function () {
 
     var post = function (req, res) {
-        var user = new User(req.body);
-        user.save();
-        res.status(201).send(user);
+        // var user = new User(req.body);
+        // user.save();
+        // res.status(201).send(user);
     }
 
     var get = function (req, res) {
+        console.log('to controller' + req.query);
         query = req.query;
-        User.find(query, function (err, users) {
-            if (err) {
-                res.status(500).send(err);
-            } else {
-                var returnUsers = [];
-                users.forEach(function (element) {
-                    var newUser = element.toJSON();
-                    newUser.links = {};
-                    if (req.headers.host === "localhost:8000") {
-                        newUser.links.self = "http://" + req.headers.host + '/api/users/' + newUser._id;
-                    } else {
-                        newUser.links.self = "https://" + req.headers.host + '/api/users/' + newUser._id;
-                    }
-                    returnUsers.push(newUser);
-                }, this);
-                res.json(returnUsers);
-            }
+        userRepoService.listUsers().then(function (rows) {
+            screen.write(query, "json");
+            var tree = new Treeize;
+            tree.grow(rows);
+            res.json(tree.getData());
+        }).catch(function (err) {
+            console.error("Opps " + err);
+        }).finally(function () {
+            console.log('db destroyed');
+            //db.destroy();
         });
+
+
+        // User.find(query, function (err, users) {
+        //     if (err) {
+        //         res.status(500).send(err);
+        //     } else {
+        //         var returnUsers = [];
+        //         users.forEach(function (element) {
+        //             var newUser = element.toJSON();
+        //             newUser.links = {};
+        //             if (req.headers.host === "localhost:8000") {
+        //                 newUser.links.self = "http://" + req.headers.host + '/api/users/' + newUser._id;
+        //             } else {
+        //                 newUser.links.self = "https://" + req.headers.host + '/api/users/' + newUser._id;
+        //             }
+        //             returnUsers.push(newUser);
+        //         }, this);
+        //         res.json(returnUsers);
+        //     }
+        // });
     }
 
     var getUserById = function (req, res) {

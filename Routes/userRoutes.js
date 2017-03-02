@@ -1,9 +1,8 @@
 var express = require('express');
 
-var routes = function (User) {
+var routes = function () {
     var userRouter = express.Router();
-    var userController = require('../Controllers/userController')(User);
-    console.log(userController);
+    var userController = require('../Controllers/userController')();
     //default users routes
     userRouter.route('/')
         .post(userController.post)
