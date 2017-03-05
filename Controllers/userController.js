@@ -4,109 +4,107 @@ var userRepoService = require('../services/userRepoService')(db);
 var Treeize = require('treeize');
 
 var userController = function () {
-
     var post = function (req, res) {
-        // var user = new User(req.body);
-        // user.save();
-        // res.status(201).send(user);
-    }
-
-    var get = function (req, res) {
-        console.log('to controller' + req.query);
-        query = req.query;
-        userRepoService.listUsers().then(function (rows) {
-            screen.write(query, "json");
-            var tree = new Treeize;
-            tree.grow(rows);
-            res.json(tree.getData());
+        var user = req.body;
+        userRepoService.addUser(user).then(function (rows) {
+            screen.write(rows, "json");
+            res.status(201).send(rows);
         }).catch(function (err) {
-            console.error("Opps " + err);
+            res.status(500).send(err);
         }).finally(function () {
             console.log('db destroyed');
             //db.destroy();
         });
-
-
-        // User.find(query, function (err, users) {
-        //     if (err) {
-        //         res.status(500).send(err);
-        //     } else {
-        //         var returnUsers = [];
-        //         users.forEach(function (element) {
-        //             var newUser = element.toJSON();
-        //             newUser.links = {};
-        //             if (req.headers.host === "localhost:8000") {
-        //                 newUser.links.self = "http://" + req.headers.host + '/api/users/' + newUser._id;
-        //             } else {
-        //                 newUser.links.self = "https://" + req.headers.host + '/api/users/' + newUser._id;
-        //             }
-        //             returnUsers.push(newUser);
-        //         }, this);
-        //         res.json(returnUsers);
-        //     }
-        // });
     }
 
-    var getUserById = function (req, res) {
-        res.json(req.user);
+    var get = function (req, res) {
+        var url = req.protocol + '://' + req.get('host');
+        query = req.query;
+        console.log(query);
+        var userId = req.params.userId || undefined;
+        userRepoService.listUsers(query, userId).then(function (rows) {
+            screen.write(rows, "json");
+            var tree = new Treeize;
+            tree.grow(rows);
+            users = tree.getData();
+            if (!userId) {
+                users.forEach(function (user) {
+                    user.link = {
+                        'user': url + '/api/users/' + user.user_id
+                    };
+                }, this);
+            }
+            res.json(users);
+        }).catch(function (err) {
+            res.status(500).send(err);
+        }).finally(function () {
+            console.log('db destroyed');
+            //db.destroy();
+        });
+    }
+    var getUser = function (req, res) {
+        get(req, res);
+    };
+
+    var checkUserById = function (userId, res) {
+        userRepoService.listUsers(null, userId)
+            .then(function (rows) {
+                if (rows.length > 0) {
+                    res(null, rows);
+                } else {
+                    res(null, null);
+                }
+            }).catch(function (err) {
+                res(err);
+                console.error("Opps " + err);
+            }).finally(function () {
+                console.log('db destroyed');
+                //db.destroy();
+            });
     }
 
     var putUser = function (req, res) {
-        req.user.firstname = req.body.firstname;
-        req.user.lastname = req.body.lastname;
-        req.user.email = req.body.email;
-        req.user.phone = req.body.phone;
-        req.user.age = req.body.age;
-        req.user.profilePic = req.body.profilePic;
-        req.user.sex = req.body.sex;
-        req.user.bloodGroup = req.body.bloodGroup;
-        req.user.club = req.body.club;
-        req.user.address = req.body.address;
-        req.user.isAvailable = req.body.isAvailable;
-        req.user.notes = req.body.notes;
-
-        //SAVE NOW
-        req.user.save(function (err) {
-            if (err) {
-                res.status(500).send(err);
-            } else {
-                res.json(req.user);
-            }
-        });
+        patchUser(req, res);
     }
 
     var patchUser = function (req, res) {
         //DO NOT UPDATE ID
-        if (req.body._id) {
-            delete req.body._id;
+        if (req.body.user_id) {
+            delete req.body.user_id;
         }
+        req.user = {};
         //COPY WHATEVER IS UPDATED
         for (var p in req.body) {
             req.user[p] = req.body[p];
         }
-        req.user.save(function (err) {
-            if (err) {
-                res.status(500).send(err);
-            } else {
+        userRepoService.patchUser(req.params.userId, req.user)
+            .then(function (data) {
                 res.json(req.user);
-            }
-        });
+            })
+            .catch(function (err) {
+                res.status(500).send(err);
+            }).finally(function () {
+                console.log('db destroyed');
+                //db.destroy();
+            });
     }
 
     deleteUser = function (req, res) {
-        req.user.remove(function (err) {
-            if (err) {
-                res.status(500).send(err);
-            } else {
-                res.status(204).send('Removed');
-            }
+        userRepoService.deleteUser(req.params.userId).then(function (data) {
+            res.status(204).send('Removed');
+        }).catch(function (err) {
+            res.status(500).send(err);
+        }).finally(function () {
+            console.log('db destroyed');
+            //db.destroy();
         });
     }
 
     return {
         get: get,
         post: post,
-        getUserById: getUserById,
+        checkUserById: checkUserById,
+        getUser: getUser,
         putUser: putUser,
         patchUser: patchUser,
         deleteUser: deleteUser

@@ -10,7 +10,9 @@ var routes = function () {
 
     //CREATE CUSTOM MIDDLEWARE TO GET SINGLE USER DATA
     userRouter.use('/:userId', function (req, res, next) {
-        User.findById(req.params.userId, function (err, user) {
+        userController.checkUserById(req.params.userId, function (err, user) {
+            console.log('Comes here')
+            console.error(err + '-' + user);
             if (err) {
                 res.status(500).send(err);
             } else if (user) {
@@ -24,7 +26,7 @@ var routes = function () {
 
     //individual user routes
     userRouter.route('/:userId')
-        .get(userController.getUserById)
+        .get(userController.getUser)
         .put(userController.putUser)
         .patch(userController.patchUser)
         .delete(userController.deleteUser);

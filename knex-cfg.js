@@ -8,7 +8,7 @@ module.exports = {
             database: 'blood_donation',
             charset: 'utf8'
         },
-        debug: true
+        debug: false
     },
     pg_prod: {
         client: 'pg',
@@ -19,6 +19,6 @@ module.exports = {
             database: 'd4rfh3r3hge9ta',
             charset: 'utf8'
         },
-        debug: true
+        debug: false
     }
 };
