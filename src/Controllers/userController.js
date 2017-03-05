@@ -103,6 +103,7 @@ var userController = function () {
         });
     };
 
+
     return {
         get: get,
         post: post,
@@ -110,7 +111,7 @@ var userController = function () {
         getUser: getUser,
         putUser: putUser,
         patchUser: patchUser,
-        deleteUser: deleteUser
+        deleteUser: deleteUser,
     };
 };
 

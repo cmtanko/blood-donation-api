@@ -8,6 +8,7 @@ var routes = function () {
         .post(userController.post)
         .get(userController.get);
 
+
     //CREATE CUSTOM MIDDLEWARE TO GET SINGLE USER DATA
     userRouter.use('/:userId', function (req, res, next) {
         userController.checkUserById(req.params.userId, function (err, user) {
@@ -28,6 +29,8 @@ var routes = function () {
         .put(userController.putUser)
         .patch(userController.patchUser)
         .delete(userController.deleteUser);
+
+
     return userRouter;
 };
 
