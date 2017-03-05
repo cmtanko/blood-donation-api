@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 var cfg = require('./knex-cfg');
 var knex = require('knex')(cfg.pg_dev);

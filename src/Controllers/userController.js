@@ -1,5 +1,5 @@
 var screen = require('../screen');
-var db = require('../db');
+var db = require('../../db');
 var userRepoService = require('../services/userRepoService')(db);
 var Treeize = require('treeize');
 
@@ -7,7 +7,7 @@ var userController = function () {
     var post = function (req, res) {
         var user = req.body;
         userRepoService.addUser(user).then(function (rows) {
-            screen.write(rows, "json");
+            screen.write(rows, 'json');
             res.status(201).send(rows);
         }).catch(function (err) {
             res.status(500).send(err);
@@ -15,18 +15,18 @@ var userController = function () {
             console.log('db destroyed');
             //db.destroy();
         });
-    }
+    };
 
     var get = function (req, res) {
         var url = req.protocol + '://' + req.get('host');
-        query = req.query;
+        var query = req.query;
         console.log(query);
         var userId = req.params.userId || undefined;
         userRepoService.listUsers(query, userId).then(function (rows) {
-            screen.write(rows, "json");
-            var tree = new Treeize;
+            screen.write(rows, 'json');
+            var tree = new Treeize();
             tree.grow(rows);
-            users = tree.getData();
+            var users = tree.getData();
             if (!userId) {
                 users.forEach(function (user) {
                     user.link = {
@@ -41,7 +41,7 @@ var userController = function () {
             console.log('db destroyed');
             //db.destroy();
         });
-    }
+    };
     var getUser = function (req, res) {
         get(req, res);
     };
@@ -56,16 +56,12 @@ var userController = function () {
                 }
             }).catch(function (err) {
                 res(err);
-                console.error("Opps " + err);
             }).finally(function () {
                 console.log('db destroyed');
-                //db.destroy();
             });
-    }
+    };
 
-    var putUser = function (req, res) {
-        patchUser(req, res);
-    }
+
 
     var patchUser = function (req, res) {
         //DO NOT UPDATE ID
@@ -75,8 +71,11 @@ var userController = function () {
         req.user = {};
         //COPY WHATEVER IS UPDATED
         for (var p in req.body) {
-            req.user[p] = req.body[p];
+            if (req.body.hasOwnProperty(p)) {
+                req.user[p] = req.body[p];
+            }
         }
+
         userRepoService.patchUser(req.params.userId, req.user)
             .then(function (data) {
                 res.json(req.user);
@@ -87,9 +86,13 @@ var userController = function () {
                 console.log('db destroyed');
                 //db.destroy();
             });
-    }
+    };
 
-    deleteUser = function (req, res) {
+    var putUser = function (req, res) {
+        patchUser(req, res);
+    };
+
+    var deleteUser = function (req, res) {
         userRepoService.deleteUser(req.params.userId).then(function (data) {
             res.status(204).send('Removed');
         }).catch(function (err) {
@@ -98,7 +101,7 @@ var userController = function () {
             console.log('db destroyed');
             //db.destroy();
         });
-    }
+    };
 
     return {
         get: get,
@@ -108,7 +111,7 @@ var userController = function () {
         putUser: putUser,
         patchUser: patchUser,
         deleteUser: deleteUser
-    }
-}
+    };
+};
 
 module.exports = userController;

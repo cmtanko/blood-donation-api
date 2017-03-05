@@ -11,15 +11,13 @@ var routes = function () {
     //CREATE CUSTOM MIDDLEWARE TO GET SINGLE USER DATA
     userRouter.use('/:userId', function (req, res, next) {
         userController.checkUserById(req.params.userId, function (err, user) {
-            console.log('Comes here')
-            console.error(err + '-' + user);
             if (err) {
                 res.status(500).send(err);
             } else if (user) {
                 req.user = user;
                 next();
             } else {
-                res.status(404).send("no user found");
+                res.status(404).send('no user found');
             }
         });
     });
@@ -31,6 +29,6 @@ var routes = function () {
         .patch(userController.patchUser)
         .delete(userController.deleteUser);
     return userRouter;
-}
+};
 
 module.exports = routes;
