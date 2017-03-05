@@ -57,6 +57,8 @@ var repo = function (db) {
                 .insert(address, 'address_id')
                 .into('address')
                 .then(function (ids) {
+                    console.log(ids);
+                    user.address_id = ids[0];
                     return trx.insert(user, 'user_id')
                         .into('buser')
                         .then();
