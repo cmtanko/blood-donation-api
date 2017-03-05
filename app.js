@@ -24,7 +24,29 @@ app.get('/', function (req, res) {
     var url = req.protocol + '://' + req.get('host');
     var options = {};
     options.users = {
-        'users': url + '/api/users/'
+        'methods': '[GET/POST]',
+        'users': url + '/api/users/',
+        'eg': {
+            "first_name": "firstname",
+            "last_name": "lastname",
+            "email": "sdfdfdsd@gmail.com",
+            "bloodgroup_id": 4,
+            "sex_id": 2,
+            "is_active": true,
+            "is_available": false,
+            "note": "",
+            "profile_pic": "",
+            "last_update": "2017-01-01",
+            "create_date": "2017-01-01",
+            "address": {
+                "address": "new address",
+                "address2": "patan",
+                "city_id": 1,
+                "phone": "9854895732",
+                "postal_code": "00977",
+                "last_update": "2017-04-03"
+            }
+        }
     };
     options.formdata = {
         'sex': url + '/api/formdata/sex/',

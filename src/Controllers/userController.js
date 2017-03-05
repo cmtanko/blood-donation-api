@@ -30,6 +30,7 @@ var userController = function () {
             if (!userId) {
                 users.forEach(function (user) {
                     user.link = {
+                        'methods': '[GET/PUT/PATCH/DELETE]',
                         'user': url + '/api/users/' + user.user_id
                     };
                 }, this);
