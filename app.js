@@ -25,7 +25,7 @@ app.get('/', function (req, res) {
     var options = {};
     options.users = {
         'methods': '[GET/POST]',
-        'users': url + '/api/users/',
+        'users': url + '/api/users/?sex=&city=&country=&bloodgroup=&active=&available=',
         'eg': {
             "first_name": "firstname",
             "last_name": "lastname",

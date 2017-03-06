@@ -3,7 +3,16 @@
 var Promise = require('bluebird');
 
 var repo = function (db) {
-    var getUserQuery = function (userId) {
+    var getUserQuery = function (queryString, userId) {
+        var bloodGroup = queryString.bloodgroup;
+        var sex = queryString.sex;
+        var country = queryString.country;
+        var city = queryString.city;
+        var active = queryString.active;
+        var available = queryString.available;
+        var firstName = queryString.firstname;
+        var lastName = queryString.lastname;
+
         var query = db('buser')
             .join('bloodgroup', 'buser.bloodgroup_id', '=', 'bloodgroup.bloodgroup_id')
             .join('sex', 'buser.sex_id', '=', 'sex.sex_id')
@@ -13,7 +22,7 @@ var repo = function (db) {
         if (userId) {
             query = query.where('buser.user_id', '=', userId);
         }
-        return query.select('buser.user_id',
+        query = query.select('buser.user_id',
             'buser.first_name',
             'buser.last_name',
             'buser.email',
@@ -31,12 +40,37 @@ var repo = function (db) {
             'address.phone as address:phone',
             'address.postal_code as address:postal_code'
         );
+        if (bloodGroup) {
+            query = query.whereRaw('LOWER(bloodgroup.bloodgroup) = ?', bloodGroup.toLowerCase());
+        }
+        if (sex) {
+            query = query.whereRaw('LOWER(sex.sex) = ?', sex.toLowerCase());
+        }
+        if (country) {
+            query = query.whereRaw('LOWER(country.country) = ?', country.toLowerCase());
+        }
+        if (city) {
+            query = query.whereRaw('LOWER(city.city) = ?', city.toLowerCase());
+        }
+        if (firstName) {
+            query = query.whereRaw("LOWER(buser.first_name) LIKE  '%' || ? || '%'", firstName.toLowerCase());
+        }
+        if (lastName) {
+            query = query.whereRaw("LOWER(buser.last_name) LIKE '%' || ? || '%'", lastName.toLowerCase());
+        }
+        if (active) {
+            query = query.whereRaw('buser.is_active = ?', active);
+        }
+        if (available) {
+            query = query.whereRaw('buser.is_available = ?', available);
+        }
+        return query;
     };
     var listUsers = function (query, userId) {
         if (userId) {
-            return getUserQuery(userId).then();
+            return getUserQuery(query, userId).then();
         } else {
-            return getUserQuery().then();
+            return getUserQuery(query).then();
         }
     };
 
@@ -57,7 +91,6 @@ var repo = function (db) {
                 .insert(address, 'address_id')
                 .into('address')
                 .then(function (ids) {
-                    console.log(ids);
                     user.address_id = ids[0];
                     return trx.insert(user, 'user_id')
                         .into('buser')
