@@ -12,3 +12,6 @@ The express build is configured to use port 8000. From a commmand line do:
 >gulp
 
 Should launch the app with BrowserSync and open a browser to "http://localhost:8000"
+
+Change A
+Change B
