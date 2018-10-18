@@ -4,18 +4,14 @@ var Promise = require('bluebird');
 
 var repo = function (db) {
     var getUserQuery = function (queryString, userId) {
-        var bloodGroup, sex, country, city, active, available, firstName, lastName;
-        if (queryString) {
-            bloodGroup = queryString.bloodgroup;
-            sex = queryString.sex;
-            country = queryString.country;
-            city = queryString.city;
-            active = queryString.active;
-            available = queryString.available;
-            firstName = queryString.firstname;
-            lastName = queryString.lastname;
-        }
-
+        var bloodGroup = queryString.bloodgroup;
+        var sex = queryString.sex;
+        var country = queryString.country;
+        var city = queryString.city;
+        var active = queryString.active;
+        var available = queryString.available;
+        var firstName = queryString.firstname;
+        var lastName = queryString.lastname;
 
         var query = db('buser')
             .join('bloodgroup', 'buser.bloodgroup_id', '=', 'bloodgroup.bloodgroup_id')

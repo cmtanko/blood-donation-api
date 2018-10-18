@@ -20,6 +20,7 @@ var userController = function () {
     var get = function (req, res) {
         var url = req.protocol + '://' + req.get('host');
         var query = req.query;
+        console.log(query);
         var userId = req.params.userId || undefined;
         userRepoService.listUsers(query, userId).then(function (rows) {
             screen.write(rows, 'json');

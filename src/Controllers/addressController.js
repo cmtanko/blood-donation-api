@@ -7,6 +7,7 @@ var addressController = function () {
     var getCities = function (req, res) {
         var url = req.protocol + '://' + req.get('host');
         var query = req.query;
+        console.log(query);
         var cityId = req.params.cityId || undefined;
         addressRepoService.listCities(query, cityId).then(function (rows) {
             screen.write(rows, 'json');
@@ -32,6 +33,7 @@ var addressController = function () {
     var getCountries = function (req, res) {
         var url = req.protocol + '://' + req.get('host');
         var query = req.query;
+        console.log(query);
         var countryId = req.params.countryId || undefined;
         addressRepoService.listCountries(query, countryId).then(function (rows) {
             screen.write(rows, 'json');
@@ -57,6 +59,7 @@ var addressController = function () {
     var getClubTypes = function (req, res) {
         var url = req.protocol + '://' + req.get('host');
         var query = req.query;
+        console.log(query);
         var clubTypeId = req.params.clubTypeId || undefined;
         addressRepoService.listClubTypes(query, clubTypeId).then(function (rows) {
             screen.write(rows, 'json');
@@ -104,7 +107,7 @@ var addressController = function () {
             if (!sexId) {
                 sexs.forEach(function (s) {
                     s.link = {
-                        'sex': url + '/api/formdata/sex/' + s.sex_id
+                        'sex': url + '/api/sex/' + s.sex_id
                     };
                 }, this);
             }
@@ -129,7 +132,7 @@ var addressController = function () {
             if (!sexId) {
                 sexs.forEach(function (s) {
                     s.link = {
-                        'bloodgroup': url + '/api/formdata/bloodgroups/' + s.bloodgroup_id
+                        'bloodgroup': url + '/api/bloodgroups/' + s.bloodgroup_id
                     };
                 }, this);
             }
