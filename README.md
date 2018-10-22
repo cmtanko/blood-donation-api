@@ -9,6 +9,6 @@ Installing the application for development: from the console type npm install
 Running
 
 The express build is configured to use port 8000. From a commmand line do:
->gulp
+>gulp ---
 
 Should launch the app with BrowserSync and open a browser to "http://localhost:8000"
